@@ -2,7 +2,7 @@ import React from "react";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Home from "../screens/Home";
-import myMap from "../screens/Map";
+import Maps from "../screens/Map";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -16,7 +16,7 @@ const MyTheme = {
 
 const HomeNavigator = () => (
     <Navigator headerMode="none">
-        <Screen name="Map" component={myMap} />
+        <Screen name="Maps" component={Maps} />
         <Screen name="Home" component={Home} />
     </Navigator>
 );
