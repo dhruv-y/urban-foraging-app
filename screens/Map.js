@@ -1,31 +1,65 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View } from 'react-native';
+import {
+    AppRegistry,
+    StyleSheet,
+    Text,
+    View,
+    Dimensions
+} from 'react-native';
 import database from '@react-native-firebase/database';
 import { firebase } from '../firebase/config'
 import MapDisplay from '../components/maps/map-display/MapDisplay'
 
-export default function Map({ navigation }) {
-
-    const [locations, setLocations] = useState(null);
-    useEffect(() => {
-        if (!locations) {
-            getLocations();
+class Map extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            loading: false,
+            locations: []
         }
-    }, [])
+    }
 
-    const getLocations = async () => {
-        await firebase.database()
+    componentDidMount() {
+        this.setState({ loading: true });
+        firebase.database()
             .ref('/')
             .once('value')
-            .then(snapshot => {
-                setLocations(snapshot.val())
+            .then((snapshot) => {
+                const location = snapshot.val()
+                this.setState({
+                    locations: location,
+                });
             });
     }
 
-    return (
-        <View>
-            <Text>Welcome to Maps!</Text>
-            <MapDisplay locations={locations}></MapDisplay>
-        </View>
-    )
+
+    render() {
+        const { loading, locations } = this.state;
+        return (
+            <View>
+                <Text>Welcome to Maps!</Text>
+                <MapDisplay locations={locations}></MapDisplay>
+            </View>
+        )
+    }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        ...StyleSheet.absoluteFillObject,
+        height: 800,
+        width: 400,
+        alignItems: 'center',
+        marginTop: 100,
+        marginLeft: 30,
+    },
+    map: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    header: {
+        fontSize: 20,
+        margin: 15,
+    }
+});
+
+export default Map

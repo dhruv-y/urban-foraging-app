@@ -27,33 +27,30 @@ const styles = StyleSheet.create({
 });
 
 const MapDisplay = (props) => {
-
-    if (props) {
-        let markers = props.locations
-    }
-
-
     const [region, setRegion] = useState({
-        latitude: 51.5078788,
-        longitude: -0.0877321,
+        latitude: 39.1636505,
+        longitude: -86.525757,
         latitudeDelta: 0.009,
         longitudeDelta: 0.009
     });
 
+
     return (
         <View style={styles.container}>
-
             <MapView
                 provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                 style={styles.map}
                 region={region}
                 onRegionChangeComplete={region => setRegion(region)}
             >
-
+                {props.locations.map((marker) => <Marker
+                    key={marker.UNIQUEID}
+                    coordinate={{ latitude: marker.LATITUDE, longitude: marker.LONGITUDE }}
+                >
+                </Marker >)}
             </MapView>
         </View>
     );
 }
-
 
 export default MapDisplay;
