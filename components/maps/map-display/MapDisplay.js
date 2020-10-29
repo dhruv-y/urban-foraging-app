@@ -42,10 +42,13 @@ const MapDisplay = (props) => {
                 {props.locations.map((marker) => <Marker
                     key={marker.UNIQUEID}
                     coordinate={{ latitude: marker.LATITUDE, longitude: marker.LONGITUDE }}
+                    image={require('../../../assets/images/tree_marker_1.png')}
+                    title={`Specie - ${marker.SPECIES}`}
+                    description={`Address - ${marker.ADDRESS} ${marker.STREET}`}
                 >
                 </Marker >)}
             </MapView>
-        </View>
+        </View >
     );
 }
 
