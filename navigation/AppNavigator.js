@@ -3,6 +3,7 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Home from "../screens/Home";
 import Maps from "../screens/Map";
+import Explore from "../screens/Explore";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -16,8 +17,9 @@ const MyTheme = {
 
 const HomeNavigator = () => (
     <Navigator headerMode="none">
-        <Screen name="Maps" component={Maps} />
         <Screen name="Home" component={Home} />
+        <Screen name="Map" component={Maps} />
+        <Screen name="Explore" component={Explore} />
     </Navigator>
 );
 

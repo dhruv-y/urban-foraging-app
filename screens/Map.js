@@ -36,8 +36,33 @@ class Map extends React.Component {
     render() {
         const { loading, locations } = this.state;
         return (
-            <View>
-                <Text>Welcome to Maps!</Text>
+            <View style={{
+                backgroundColor: "#FFF",
+                flex: 1
+            }}>
+                <View style={{
+                    backgroundColor: "#00a46c",
+                    height: "10%",
+                    borderBottomLeftRadius: 22,
+                    borderBottomRightRadius: 22,
+                    paddingHorizontal: 20
+                }}>
+
+                    <View style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginTop: 45,
+                        width: "100%"
+                    }}>
+                        <View style={{ width: "50%" }}>
+                            <Text style={{
+                                fontSize: 24,
+                                color: "#FFF",
+                                fontWeight: "bold"
+                            }}>Edible Tree Map</Text>
+                        </View>
+                    </View>
+                </View>
                 <MapDisplay locations={locations}></MapDisplay>
             </View>
         )

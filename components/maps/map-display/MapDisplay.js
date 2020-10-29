@@ -7,26 +7,22 @@ import {
     Dimensions
 } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
     container: {
         ...StyleSheet.absoluteFillObject,
-        height: 800,
-        width: 400,
-        alignItems: 'center',
-        marginTop: 100,
-        marginLeft: 30,
+        height: height,
+        width: width,
+        marginTop: height / 9,
     },
     map: {
         ...StyleSheet.absoluteFillObject,
     },
-    header: {
-        fontSize: 20,
-        margin: 15,
-    }
 });
 
 const MapDisplay = (props) => {
+
     const [region, setRegion] = useState({
         latitude: 39.1636505,
         longitude: -86.525757,
@@ -34,9 +30,9 @@ const MapDisplay = (props) => {
         longitudeDelta: 0.009
     });
 
-
     return (
         <View style={styles.container}>
+
             <MapView
                 provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                 style={styles.map}
