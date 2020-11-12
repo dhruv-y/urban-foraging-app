@@ -10,30 +10,8 @@ import {
 
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import TreeCard from '../tree-card/TreeCard'
+import MarkerCallout from '../marker-callout/MarkerCallout'
 const { width, height } = Dimensions.get("window");
-
-const styles = StyleSheet.create({
-    container: {
-        ...StyleSheet.absoluteFillObject,
-        height: height,
-        width: width,
-        marginTop: height / 9,
-    },
-    map: {
-        ...StyleSheet.absoluteFillObject,
-    },
-    location: {
-        width: 50,
-        height: 50,
-        position: "absolute",
-        top: 20,
-        right: 20,
-        borderRadius: 30,
-        backgroundColor: "#e2e2e2",
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
-});
 
 const MapDisplay = ({ locations, initialRegion }) => {
     const [region, setRegion] = useState(initialRegion);
@@ -54,11 +32,9 @@ const MapDisplay = ({ locations, initialRegion }) => {
                     key={marker.UNIQUEID}
                     coordinate={{ latitude: marker.LATITUDE, longitude: marker.LONGITUDE }}
                     image={require('../../../assets/images/tree_marker_2.png')}
-                    title={`Specie - ${marker.SPECIES}`}
-                    description={`Address - ${marker.ADDRESS} ${marker.STREET}`}
                 >
+                    <MarkerCallout details={marker} />
                 </Marker >)}
-
             </MapView>
 
             <TouchableOpacity
@@ -73,5 +49,28 @@ const MapDisplay = ({ locations, initialRegion }) => {
         </View >
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        ...StyleSheet.absoluteFillObject,
+        height: height,
+        width: width,
+        marginTop: height / 9,
+    },
+    map: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    location: {
+        width: 50,
+        height: 50,
+        position: "absolute",
+        top: 20,
+        right: 20,
+        borderRadius: 30,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    }
+});
 
 export default MapDisplay;
