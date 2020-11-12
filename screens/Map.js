@@ -9,13 +9,16 @@ import {
 import database from '@react-native-firebase/database';
 import { firebase } from '../firebase/config'
 import MapDisplay from '../components/maps/map-display/MapDisplay'
+import * as Permissions from 'expo-permissions';
+import * as Location from 'expo-location';
 
 class Map extends React.Component {
     constructor() {
         super();
         this.state = {
             loading: false,
-            locations: []
+            locations: [],
+            initialRegion: null
         }
     }
 
@@ -30,11 +33,30 @@ class Map extends React.Component {
                     locations: location,
                 });
             });
+        this._getLocationAsync();
+
+    }
+
+    _getLocationAsync = async () => {
+        const { status } = await Permissions.askAsync(Permissions.LOCATION);
+        if (status !== 'granted') {
+            alert('Permission Not Granted!');
+        }
+
+        const location = await Location.getCurrentPositionAsync({ enabledHighAccuracy: true });
+        let region = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.009,
+            longitudeDelta: 0.009,
+        }
+
+        this.setState({ initialRegion: region })
     }
 
 
     render() {
-        const { loading, locations } = this.state;
+        const { loading, locations, initialRegion } = this.state;
         return (
             <View style={{
                 backgroundColor: "#FFF",
@@ -63,7 +85,7 @@ class Map extends React.Component {
                         </View>
                     </View>
                 </View>
-                <MapDisplay locations={locations}></MapDisplay>
+                <MapDisplay locations={locations} initialRegion={initialRegion}></MapDisplay>
             </View>
         )
     }
