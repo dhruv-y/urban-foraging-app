@@ -7,13 +7,13 @@ import {
     Dimensions,
     TouchableOpacity
 } from 'react-native';
-
+import { useNavigation } from '@react-navigation/native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
-import TreeCard from '../tree-card/TreeCard'
 import MarkerCallout from '../marker-callout/MarkerCallout'
 const { width, height } = Dimensions.get("window");
 
 const MapDisplay = ({ locations, initialRegion }) => {
+    const navigation = useNavigation();
     const [region, setRegion] = useState(initialRegion);
 
     return (
@@ -28,10 +28,13 @@ const MapDisplay = ({ locations, initialRegion }) => {
                 rotateEnabled={false}
                 onRegionChangeComplete={region => setRegion(region)}
             >
-                {locations.map((marker) => <Marker
-                    key={marker.UNIQUEID}
+                {locations.map((marker, id) => <Marker
+                    key={id}
                     coordinate={{ latitude: marker.LATITUDE, longitude: marker.LONGITUDE }}
                     image={require('../../../assets/images/tree_marker_2.png')}
+                    onCalloutPress={() => navigation.navigate('Details',
+                        { treeID: `${id}` }
+                    )}
                 >
                     <MarkerCallout details={marker} />
                 </Marker >)}

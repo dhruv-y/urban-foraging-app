@@ -7,10 +7,9 @@ import {
     Text,
     View,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity,
+    Button,
 } from 'react-native';
-
-const API_KEY = 'a9Yagok3eDrzeRbDw-70RUFFZ9HvCzuvM6FsheMRif0'
 
 const MarkerCallout = ({ details }) => {
 
@@ -19,26 +18,26 @@ const MarkerCallout = ({ details }) => {
         name: details.SPECIES,
         imageURL: "",
         address: details.ADDRESS,
-        street: ""
+        street: details.STREET
     });
 
-    const getPlantInfo = async () => {
-        const data = await axios
-            .get(`https://trefle.io/api/v1/species/search?token=${API_KEY}&q=${details.SPECIES}&limit=1`)
-            .then(function (response) {
-                console.log(response)
-                return
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
-
-
     return (
-        <Callout tooltip>
+        <Callout tooltip >
             <View style={styles.container}>
                 <Text style={styles.title}>{info.name}</Text>
+                <View>
+                    <Image
+                        style={{ width: 10, height: 10 }}
+                        source={require('../../../assets/images/location_marker_1.png')}
+                    />
+                    <Text style={styles.title}>{info.address} {info.street}</Text>
+                </View>
+
+                <View style={styles.buttonContainer}>
+                    <Button title='Details'
+                        color='#00a46c'
+                    />
+                </View>
             </View>
         </Callout>
     )
@@ -52,17 +51,16 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: '#ccc',
         padding: 15,
-        width: 150,
+        width: 200,
         alignItems: 'center',
         justifyContent: 'center',
     },
     title: {
-        fontSize: 20,
-        marginBottom: 5,
+        fontSize: 18,
     },
-    img: {
-        width: 40,
-        height: 60
+    buttonContainer: {
+        padding: 10,
+        margin: 5,
     }
 });
 

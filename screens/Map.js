@@ -54,7 +54,6 @@ class Map extends React.Component {
         this.setState({ initialRegion: region })
     }
 
-
     render() {
         const { loading, locations, initialRegion } = this.state;
         return (
@@ -76,12 +75,12 @@ class Map extends React.Component {
                         marginTop: 45,
                         width: "100%"
                     }}>
-                        <View style={{ width: "50%" }}>
+                        <View style={{ width: "80%" }}>
                             <Text style={{
                                 fontSize: 24,
                                 color: "#FFF",
                                 fontWeight: "bold"
-                            }}>Edible Tree Map</Text>
+                            }}>Explore around you</Text>
                         </View>
                     </View>
                 </View>
