@@ -33,22 +33,17 @@ const MapDisplay = ({ locations, initialRegion }) => {
                     coordinate={{ latitude: marker.LATITUDE, longitude: marker.LONGITUDE }}
                     image={require('../../../assets/images/tree_marker_2.png')}
                     onCalloutPress={() => navigation.navigate('Details',
-                        { treeID: `${id}` }
+                        {
+                            treeID: `${id}`,
+                            details: marker
+                        }
                     )}
                 >
                     <MarkerCallout details={marker} />
                 </Marker >)}
             </MapView>
 
-            <TouchableOpacity
-                style={styles.location}
-                onPress={() => console.log(initialRegion)}
-            >
-                <Image
-                    style={{ width: 30, height: 30 }}
-                    source={require('../../../assets/images/location_marker.png')}
-                />
-            </TouchableOpacity>
+
         </View >
     );
 }
@@ -62,6 +57,7 @@ const styles = StyleSheet.create({
     },
     map: {
         ...StyleSheet.absoluteFillObject,
+        marginTop: 5,
     },
     location: {
         width: 50,

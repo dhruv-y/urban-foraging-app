@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Callout } from 'react-native-maps'
 import {
     Image,
@@ -16,7 +15,6 @@ const MarkerCallout = ({ details }) => {
     const [info, getInfo] = useState({
         ID: null,
         name: details.SPECIES,
-        imageURL: "",
         address: details.ADDRESS,
         street: details.STREET
     });

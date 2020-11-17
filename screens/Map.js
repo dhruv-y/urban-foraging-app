@@ -11,6 +11,7 @@ import { firebase } from '../firebase/config'
 import MapDisplay from '../components/maps/map-display/MapDisplay'
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 class Map extends React.Component {
     constructor() {
@@ -63,7 +64,7 @@ class Map extends React.Component {
             }}>
                 <View style={{
                     backgroundColor: "#00a46c",
-                    height: "10%",
+                    height: "11%",
                     borderBottomLeftRadius: 22,
                     borderBottomRightRadius: 22,
                     paddingHorizontal: 20
@@ -72,12 +73,12 @@ class Map extends React.Component {
                     <View style={{
                         flexDirection: "row",
                         alignItems: "center",
-                        marginTop: 45,
+                        marginTop: 48,
                         width: "100%"
                     }}>
                         <View style={{ width: "80%" }}>
                             <Text style={{
-                                fontSize: 24,
+                                fontSize: 26,
                                 color: "#FFF",
                                 fontWeight: "bold"
                             }}>Explore around you</Text>
@@ -85,6 +86,7 @@ class Map extends React.Component {
                     </View>
                 </View>
                 <MapDisplay locations={locations} initialRegion={initialRegion}></MapDisplay>
+                            
             </View>
         )
     }

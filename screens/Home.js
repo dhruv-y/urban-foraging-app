@@ -37,7 +37,7 @@ class Home extends React.Component {
                 </Block>
                 <Block center middle>
                     <Image
-                        source={require("../assets/images/illustration_1.png")}
+                        source={require("../assets/images/illustration_5.png")}
                         resizeMode="contain"
                         style={{ width, height: height / 2, overflow: "visible" }}
                     />
