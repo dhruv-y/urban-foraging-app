@@ -3,7 +3,6 @@ import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions, Fla
 import { MaterialIcons } from "@expo/vector-icons"
 import { firebase } from '../firebase/config'
 const { width, height } = Dimensions.get("window");
-let currentUser = null;
 
 class Favorites extends React.Component {
     constructor(props) {
@@ -42,7 +41,6 @@ class Favorites extends React.Component {
 
     render() {
         const { navigation } = this.props;
-
         return (
             <View style={styles.container}>
                 <Text style={styles.title}>

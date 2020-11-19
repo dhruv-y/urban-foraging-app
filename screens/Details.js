@@ -192,10 +192,18 @@ export default function Details({ route, navigation }) {
             </View>
 
             <View>
-                <Button
-                    onPress={() => addToFavorites(details)}
-                    title="+ Favorites"
-                ></Button>
+                {
+
+                    (firebase.auth().currentUser ? <Button
+                        onPress={() => addToFavorites(details)}
+                        title="+ Favorites"
+                    ></Button>
+                        :
+                        null
+                    )
+
+                }
+
             </View>
         </View >
     )

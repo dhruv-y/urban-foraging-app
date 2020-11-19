@@ -17,12 +17,9 @@ const { width, height } = Dimensions.get("window");
 
 class Home extends React.Component {
 
-    componentDidMount() {
-        firebase.auth().signInWithEmailAndPassword('dyadwad@iu.edu', 'password');
-    }
-
     render() {
         const { navigation } = this.props;
+
         return (
             <Block center middle>
                 <Block center middle flex={0.5}>
@@ -42,14 +39,8 @@ class Home extends React.Component {
                 </Block>
 
                 <Block middle flex={0.5} margin={[0, theme.sizes.padding * 2]}>
-                    <Button gradient onPress={() => navigation.navigate("Favorites")}>
+                    <Button gradient shadow onPress={() => navigation.navigate("Map")}>
                         <Text center semibold white>
-                            Favorites
-                        </Text>
-                    </Button>
-
-                    <Button shadow onPress={() => navigation.navigate("Map")}>
-                        <Text center semibold>
                             Edible Tree Map
                         </Text>
                     </Button>
