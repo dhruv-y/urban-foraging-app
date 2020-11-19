@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions, TextInput } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons"
 import { firebase } from '../firebase/config'
 import axios from 'axios';
-import { set } from 'react-native-reanimated';
-import { TextInput } from 'react-native-gesture-handler';
 const API_KEY = 'a9Yagok3eDrzeRbDw-70RUFFZ9HvCzuvM6FsheMRif0'
-
+let currentUser = null;
 const { width, height } = Dimensions.get("window");
 
 export default function Details({ route, navigation }) {
@@ -43,10 +41,25 @@ export default function Details({ route, navigation }) {
     }
 
     const handleHealth = (e, val) => {
-        firebase.database().ref(`/` + treeID).update({
+        firebase.database().ref(`/trees` + treeID).update({
             "HEALTH": val
         })
         alert("submission recorded!")
+    }
+
+    const addToFavorites = async (details) => {
+        // get current user
+        currentUser = await firebase.auth().currentUser
+
+        // get unique key
+        const databaseRef = await firebase.database().ref
+            ('/users/' + currentUser.uid).child('favorites').push();
+
+        // update tree at key
+        databaseRef.set({
+            'tree': details
+        })
+        alert('Added to favorites!')
     }
 
     return (
@@ -176,6 +189,13 @@ export default function Details({ route, navigation }) {
                 <TextInput placeholder="Between 0-5"
                     style={styles.input}
                 />
+            </View>
+
+            <View>
+                <Button
+                    onPress={() => addToFavorites(details)}
+                    title="+ Favorites"
+                ></Button>
             </View>
         </View >
     )

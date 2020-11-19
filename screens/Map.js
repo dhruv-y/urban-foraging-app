@@ -26,7 +26,7 @@ class Map extends React.Component {
     componentDidMount() {
         this.setState({ loading: true });
         firebase.database()
-            .ref('/')
+            .ref('/trees')
             .once('value')
             .then((snapshot) => {
                 const location = snapshot.val()
