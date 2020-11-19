@@ -5,7 +5,8 @@ import Home from "../screens/Home";
 import Maps from "../screens/Map";
 import Explore from "../screens/Explore";
 import Details from "../screens/Details";
-
+import Login from "../screens/LoginScreen";
+import Favorites from "../screens/FavoritesScreen";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -23,6 +24,8 @@ const HomeNavigator = () => (
         <Screen name="Map" component={Maps} />
         <Screen name="Explore" component={Explore} />
         <Screen name="Details" component={Details} />
+        <Screen name="Login" component={Login} />
+        <Screen name="Favorites" component={Favorites} />
     </Navigator>
 );
 
