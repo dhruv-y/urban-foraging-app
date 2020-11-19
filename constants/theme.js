@@ -17,9 +17,9 @@ const sizes = {
     padding: 25,
 
     // font sizes
-    h1: 26,
-    h2: 20,
-    h3: 18,
+    h1: 38,
+    h2: 24,
+    h3: 22,
     title: 18,
     header: 16,
     body: 14,
