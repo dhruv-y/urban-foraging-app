@@ -7,6 +7,9 @@ import Explore from "../screens/Explore";
 import Details from "../screens/Details";
 import Login from "../screens/LoginScreen";
 import Favorites from "../screens/FavoritesScreen";
+import Dashboard from "../screens/Dashboard";
+import LoadingScreen from "../screens/LoadingScreen";
+
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -20,12 +23,14 @@ const MyTheme = {
 
 const HomeNavigator = () => (
     <Navigator headerMode="none">
+        <Screen name="LoadingScreen" component={LoadingScreen} />
         <Screen name="Home" component={Home} />
         <Screen name="Map" component={Maps} />
         <Screen name="Explore" component={Explore} />
         <Screen name="Details" component={Details} />
         <Screen name="Login" component={Login} />
         <Screen name="Favorites" component={Favorites} />
+        <Screen name="Dashboard" component={Dashboard} />
     </Navigator>
 );
 
