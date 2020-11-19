@@ -1,48 +1,57 @@
 import React, { Component } from "react";
 import {
-    ActivityIndicator,
-    Keyboard,
-    KeyboardAvoidingView,
     StyleSheet
 } from "react-native";
-
+import { firebase } from '../firebase/config'
 import Block from "../components/Block";
 import Button from "../components/Button";
 import Text from "../components/Text";
 import Input from "../components/Input";
 import { theme } from "../constants";
 
-const VALID_EMAIL = "contact@react-ui-kit.com";
-const VALID_PASSWORD = "subscribe";
-
 export default class Login extends Component {
-    state = {
-        email: VALID_EMAIL,
-        password: VALID_PASSWORD,
-        errors: [],
-        loading: false
-    };
 
-    handleLogin() {
-        const { navigation } = this.props;
-        const { email, password } = this.state;
-        const errors = [];
+    constructor(props) {
+        super(props)
 
-        Keyboard.dismiss();
-        this.setState({ loading: true });
+        this.state = ({
+            email: "",
+            password: ""
+        })
+    }
 
-        // check with backend API or with some static data
-        if (email !== VALID_EMAIL) {
-            errors.push("email");
+    handleRegister = (email, password) => {
+        try {
+            if (this.state.password.length < 6) {
+                alert("Please enter at least 6 characters!")
+                return;
+            }
+
+            firebase.auth().createUserWithEmailAndPassword(email, password);
+            alert("Register Success!")
+            navigation.navigate("Dashboard")
+
+        } catch (error) {
+            console.log(error.toString())
         }
-        if (password !== VALID_PASSWORD) {
-            errors.push("password");
-        }
+    }
 
-        this.setState({ errors, loading: false });
+    handleLogin = (email, password) => {
 
-        if (!errors.length) {
-            navigation.navigate("Map");
+        try {
+            if (this.state.password.length < 6) {
+                alert("Please enter at least 6 characters!")
+                return;
+            }
+
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((user) => {
+                    alert("Login Success!")
+                    navigation.navigate("Dashboard")
+                })
+
+        } catch (error) {
+            console.log(error.toString())
         }
     }
 
@@ -55,37 +64,37 @@ export default class Login extends Component {
             <Block padding={[0, theme.sizes.base * 2]}>
 
                 <Block middle>
+
                     <Text h1 bold>
                         Login
                     </Text>
+
                     <Input
                         label="Email"
-                        error={hasErrors("email")}
-                        style={[styles.input, hasErrors("email")]}
-                        defaultValue={this.state.email}
-                        onChangeText={text => this.setState({ email: text })}
+                        onChangeText={(email) => this.setState({ email })}
                     />
 
                     <Input
                         secure
                         label="Password"
-                        error={hasErrors("password")}
-                        style={[styles.input, hasErrors("password")]}
-                        defaultValue={this.state.password}
-                        onChangeText={text => this.setState({ password: text })}
+                        onChangeText={(password) => this.setState({ password })}
                     />
 
-                    <Button gradient onPress={() => this.handleLogin()}>
-                        {loading ? (
-                            <ActivityIndicator size="small" color="white" />
-                        ) : (
-                                <Text bold white center>
-                                    Login
-                     </Text>
-                            )}
+                    <Button gradient onPress={() => this.handleLogin(this.state.email,
+                        this.state.password)}>
+                        <Text bold white center>
+                            Login
+                        </Text>
                     </Button>
 
-                    <Button onPress={() => navigation.navigate("Forgot")}>
+                    <Button gradient onPress={() => this.handleRegister(this.state.email,
+                        this.state.password)}>
+                        <Text bold white center>
+                            Register
+                        </Text>
+                    </Button>
+
+                    <Button>
                         <Text
                             gray
                             caption
