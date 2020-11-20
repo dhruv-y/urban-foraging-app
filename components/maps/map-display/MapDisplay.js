@@ -26,6 +26,7 @@ const MapDisplay = ({ locations, initialRegion }) => {
                 showsUserLocation={true}
                 showsCompass={true}
                 rotateEnabled={false}
+                followsUserLocation
                 onRegionChangeComplete={region => setRegion(region)}
             >
                 {locations.map((marker, id) => <Marker

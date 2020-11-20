@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     Button,
 } from 'react-native';
+import { MaterialIcons } from "@expo/vector-icons"
 
 const MarkerCallout = ({ details }) => {
 
@@ -20,13 +21,18 @@ const MarkerCallout = ({ details }) => {
     });
 
     return (
-        <Callout tooltip >
+        <Callout>
             <View style={styles.container}>
-                <Text style={styles.title}>{info.name}</Text>
-                <View>
-                    <Image
-                        style={{ width: 10, height: 10 }}
-                        source={require('../../../assets/images/location_marker_1.png')}
+                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start' }}>
+
+                    <Text style={styles.title}>Specie - {info.name}</Text>
+                </View>
+
+                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', marginTop: 10 }}>
+                    <MaterialIcons
+                        name={"location-on"}
+                        size={20}
+                        style={{ marginTop: 2 }}
                     />
                     <Text style={styles.title}>{info.address} {info.street}</Text>
                 </View>
