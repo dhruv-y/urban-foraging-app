@@ -112,7 +112,8 @@ const styles = StyleSheet.create({
         fontSize: theme.sizes.font,
         fontWeight: "500",
         color: theme.colors.black,
-        height: theme.sizes.base * 3
+        height: theme.sizes.base * 3,
+        padding: 5
     },
     toggle: {
         position: "absolute",
