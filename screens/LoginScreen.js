@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import {
-    StyleSheet
+    StyleSheet,
+    View,
+    Image
 } from "react-native";
 import { firebase } from '../firebase/config'
 import Block from "../components/Block";
@@ -28,16 +30,14 @@ export default class Login extends Component {
             }
 
             firebase.auth().createUserWithEmailAndPassword(email, password);
+            //navigation.navigate("LoadingScreen")
             alert("Register Success!")
-            navigation.navigate("Dashboard")
-
         } catch (error) {
             console.log(error.toString())
         }
     }
 
     handleLogin = (email, password) => {
-
         try {
             if (this.state.password.length < 6) {
                 alert("Please enter at least 6 characters!")
@@ -47,7 +47,7 @@ export default class Login extends Component {
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then((user) => {
                     alert("Login Success!")
-                    navigation.navigate("Dashboard")
+                    //navigation.navigate("Dashboard")
                 })
 
         } catch (error) {
@@ -62,10 +62,14 @@ export default class Login extends Component {
 
         return (
             <Block padding={[0, theme.sizes.base * 2]}>
-
-                <Block middle>
-
-                    <Text h1 bold>
+                <View style={{ ...StyleSheet.absoluteFill, transform: [{ translateY: -385 },] }}>
+                    <Image
+                        source={require('../assets/images/background.jpg')}
+                        style={{ flex: 1, height: null, width: null }}
+                    />
+                </View>
+                <Block bottom>
+                    <Text h1 bold white>
                         Login
                     </Text>
 
@@ -80,32 +84,34 @@ export default class Login extends Component {
                         onChangeText={(password) => this.setState({ password })}
                     />
 
-                    <Button gradient onPress={() => this.handleLogin(this.state.email,
-                        this.state.password)}>
-                        <Text bold white center>
-                            Login
+                    <View style={{ alignItems: 'center' }}>
+                        <Button gradient onPress={() => this.handleLogin(this.state.email,
+                            this.state.password)}>
+                            <Text bold white center>
+                                Login
                         </Text>
-                    </Button>
-
-                    <Button gradient onPress={() => this.handleRegister(this.state.email,
-                        this.state.password)}>
-                        <Text bold white center>
-                            Register
+                        </Button>
+                        <Button gradient onPress={() => this.handleRegister(this.state.email,
+                            this.state.password)}>
+                            <Text bold white center>
+                                Register
                         </Text>
-                    </Button>
+                        </Button>
 
-                    <Button>
-                        <Text
-                            gray
-                            caption
-                            center
-                            style={{ textDecorationLine: "underline" }}
-                        >
-                            Forgot your password?
+                        <Button>
+                            <Text
+                                gray
+                                caption
+                                center
+                                style={{ textDecorationLine: "underline" }}
+                            >
+                                Forgot your password?
                          </Text>
-                    </Button>
-                </Block>
-            </Block>
+                        </Button>
+
+                    </View>
+                </Block >
+            </Block >
         );
     }
 }
@@ -122,7 +128,4 @@ const styles = StyleSheet.create({
         borderBottomColor: theme.colors.gray2,
         borderBottomWidth: StyleSheet.hairlineWidth
     },
-    hasErrors: {
-        borderBottomColor: theme.colors.accent
-    }
 });

@@ -7,7 +7,6 @@ class LoadingScreen extends React.Component {
     constructor(props) {
         super(props)
     }
-
     componentDidMount() {
         const { navigation } = this.props;
         firebase.auth().onAuthStateChanged(user => {
