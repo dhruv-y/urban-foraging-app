@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions, TextInput, FlatList, Modal, Card } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions, TextInput, FlatList, Modal, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons"
 import { firebase } from '../firebase/config'
 import axios from 'axios';
+import SingleMapMarker from "../components/maps/single-map-marker/SingleMapMarker"
 
 const API_KEY = 'a9Yagok3eDrzeRbDw-70RUFFZ9HvCzuvM6FsheMRif0'
-let currentUser = null;
 const { width, height } = Dimensions.get("window");
 
 export default function Details({ route, navigation }) {
@@ -99,7 +99,7 @@ export default function Details({ route, navigation }) {
 
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: "#FFF", }}>
             <ImageBackground
                 source={{
                     uri: plantInfo.imageURL + ".jpg",
@@ -144,44 +144,20 @@ export default function Details({ route, navigation }) {
                 </View>
             </View>
 
-            <View>
-                {
-                    (firebase.auth().currentUser ? <Button
-                        onPress={() => addToFavorites(details)}
-                        title="+ Favorites"
-                    ></Button>
-                        :
-                        null
-                    )
-                }
-            </View>
-
-            <View>
+            <View style={styles.commentContainer}>
                 <TextInput style={styles.comment}
                     placeholder="Visited? Leave a comment for your fellow foragers."
                     onChangeText={(comment) => setComment(comment)}
-                />
-                <View style={styles.buttonContainer}>
-                    <View style={styles.button}>
-                        <Button
-                            title="Submit"
-                            onPress={() => addComment(comment)}
-                            color='#30a46c'
-                        >
-                        </Button>
-                    </View>
-                </View>
-            </View>
 
-            <View style={styles.buttonContainer}>
-                <View style={styles.button}>
-                    <Button
-                        title="View Comments"
-                        onPress={() => { getAllComments(); setModalOpen(true) }}
-                        color='#30a46c'
-                    >
-                    </Button>
-                </View>
+                />
+                <TouchableOpacity onPress={() => addComment(comment)}
+                    style={styles.commentButton}
+                >
+                    <MaterialIcons
+                        name={"add"}
+                        size={30}
+                    />
+                </TouchableOpacity>
             </View>
 
             <Modal visible={modalOpen} animationType='slide' >
@@ -199,6 +175,93 @@ export default function Details({ route, navigation }) {
                     />
                 </View>
             </Modal>
+
+
+            <View>
+                {
+                    (firebase.auth().currentUser ?
+
+                        <View style={{
+                            flexDirection: "row",
+                            width: "100%",
+                        }}>
+                            <TouchableOpacity style={{
+                                width: "50%",
+                                backgroundColor: "#00a46c",
+                                height: 70,
+                                marginTop: 20,
+                                borderTopRightRadius: 25,
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}
+                                onPress={() => addToFavorites(details)}
+                            >
+                                <Text style={{
+                                    color: "#FFF",
+                                    fontSize: 17,
+                                    fontWeight: "bold",
+                                    alignSelf: 'stretch',
+                                    textAlign: 'center',
+                                }}>Mark Visited</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={{
+                                width: "50%",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                marginTop: 20,
+                            }}
+                                onPress={() => { getAllComments(); setModalOpen(true) }}
+                            >
+                                <Text style={{
+                                    color: "#62636a",
+                                    fontWeight: "bold",
+                                    fontSize: 17,
+                                    alignSelf: 'stretch',
+                                    textAlign: 'center',
+                                }}>Comments</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        :
+                        <View style={{
+                            flexDirection: "row",
+                            width: "100%",
+                        }}>
+                            <View style={{
+                                backgroundColor: "#00a46c",
+                                height: 70,
+                                marginTop: 20,
+                                borderTopRightRadius: 25,
+                                borderTopLeftRadius: 25,
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: "100%",
+
+                            }}>
+                                <TouchableOpacity style={{
+                                    width: "100%",
+                                    marginTop: 20,
+                                }}
+                                    onPress={() => { getAllComments(); setModalOpen(true) }}
+                                >
+                                    <Text style={{
+                                        color: "white",
+                                        fontWeight: "bold",
+                                        fontSize: 17,
+                                        alignSelf: 'stretch',
+                                        textAlign: 'center',
+                                    }}>View Comments</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    )
+                }
+            </View>
+
+            <View>
+                <SingleMapMarker latitude={details.LATITUDE} longitude={details.LONGITUDE} />
+            </View>
         </View >
     )
 }
@@ -209,6 +272,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingTop: 60,
+        height: '100%',
     },
     image: {
         width: width,
@@ -251,25 +315,36 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         paddingHorizontal: 10,
-        width: '89%'
+        width: '89%',
+
+    },
+    commentContainer: {
+        flexDirection: 'row',
+        height: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 1 / 12 * height
     },
     comment: {
         borderWidth: 1,
         borderColor: '#ddd',
         padding: 20,
         fontSize: 14,
-        borderRadius: 15,
-        margin: 20,
-        color: 'black'
+        color: 'black',
+        width: '80%',
+        borderTopLeftRadius: 15,
+        borderBottomLeftRadius: 15,
     },
-    button: {
-        width: '35%',
-    },
-    buttonContainer: {
-        marginRight: 20,
-        marginBottom: 10,
-        flexDirection: "row",
-        justifyContent: "flex-end",
+    commentButton: {
+        width: 50,
+        height: 70,
+        borderColor: '#ddd',
+        borderWidth: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 2,
+        borderTopRightRadius: 15,
+        borderBottomRightRadius: 15
     },
     modalToggle: {
         marginTop: 10,
