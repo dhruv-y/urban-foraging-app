@@ -1,20 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions, TextInput, FlatList, Modal, Card } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons"
 import { firebase } from '../firebase/config'
 import axios from 'axios';
+
 const API_KEY = 'a9Yagok3eDrzeRbDw-70RUFFZ9HvCzuvM6FsheMRif0'
 let currentUser = null;
 const { width, height } = Dimensions.get("window");
 
 export default function Details({ route, navigation }) {
     const { treeID, details } = route.params;
+    const [modalOpen, setModalOpen] = useState(false);
+    const [comment, setComment] = useState(null);
+    const [comments, setAllComments] = useState([]);
+
+
     const [plantInfo, setPlantInfo] = useState({
         name: "",
         imageURL: "",
-        health: 0,
-        edibility: 0,
-        yield: 0,
+
     })
 
     useEffect(() => {
@@ -34,9 +38,6 @@ export default function Details({ route, navigation }) {
         setPlantInfo({
             name: data.common_name,
             imageURL: data.image_url,
-            health: 0,
-            edibility: 0,
-            yield: 0,
         });
     }
 
@@ -59,8 +60,43 @@ export default function Details({ route, navigation }) {
         databaseRef.set({
             'tree': details
         })
+
         alert('Added to favorites!')
     }
+
+    const addComment = async (comment) => {
+        // get unique key
+        const databaseRef = await firebase.database().ref
+            ('/trees/' + treeID).child('comments').push()
+
+        // update tree at key
+        databaseRef.set({
+            'comment': comment
+        })
+        alert('Comment added!')
+    }
+
+    const getAllComments = async () => {
+        const newData = []
+        await firebase.database().ref('/trees/' + treeID).child('comments')
+            .on('value', function (snapshot) {
+                snapshot.forEach((item) => {
+                    newData.push(item.val().comment)
+                })
+            });
+        setAllComments(newData)
+        console.log(comments)
+    }
+
+    const renderComment = ({ item }) => {
+        console.log(item)
+        return (
+            <View>
+                <Text>{item}</Text>
+            </View>
+        )
+    }
+
 
     return (
         <View style={{ flex: 1 }}>
@@ -108,92 +144,8 @@ export default function Details({ route, navigation }) {
                 </View>
             </View>
 
-            <Text style={styles.info}>Visited?</Text>
-
-            <View
-                // onPress={()=>navigation.navigate("Detail")}
-                style={{
-                    height: 80,
-                    elevation: 2,
-                    backgroundColor: "#FFF",
-                    marginTop: 80,
-                    borderRadius: 15,
-                    paddingHorizontal: 20
-                }}
-            >
-                <Text>Tree Health </Text>
-                <View style={styles.buttons}>
-                    <View style={styles.buttonContainer}>
-                        <Button title="1"
-                            color="#00BFA6"
-                            onPress={(e) => handleHealth(e, 1)} />
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <Button title="2"
-                            color="#00BFA6"
-                            onPress={(e) => handleHealth(e, 2)}
-                        />
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <Button title="3"
-                            color="#00BFA6"
-                            onPress={(e) => handleHealth(e, 3)}
-                        />
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <Button title="4"
-                            color="#00BFA6"
-                            onPress={(e) => handleHealth(e, 4)}
-                        />
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <Button title="5"
-                            color="#00BFA6"
-                            onPress={(e) => handleHealth(e, 5)}
-                        />
-                    </View>
-                </View>
-            </View>
-
-            <View
-                // onPress={()=>navigation.navigate("Detail")}
-                style={{
-                    height: 80,
-                    elevation: 2,
-                    backgroundColor: "#FFF",
-                    marginTop: 15,
-                    borderRadius: 15,
-                    width: '80%',
-                    marginLeft: 14
-                }}
-            >
-                <Text>Current Yield</Text>
-                <TextInput placeholder="Between 0-5"
-                    style={styles.input}
-                />
-            </View>
-
-            <View
-                // onPress={()=>navigation.navigate("Detail")}
-                style={{
-                    height: 80,
-                    elevation: 2,
-                    backgroundColor: "#FFF",
-                    marginTop: 15,
-                    borderRadius: 15,
-                    width: '80%',
-                    marginLeft: 14
-                }}
-            >
-                <Text>Edibility</Text>
-                <TextInput placeholder="Between 0-5"
-                    style={styles.input}
-                />
-            </View>
-
             <View>
                 {
-
                     (firebase.auth().currentUser ? <Button
                         onPress={() => addToFavorites(details)}
                         title="+ Favorites"
@@ -201,10 +153,52 @@ export default function Details({ route, navigation }) {
                         :
                         null
                     )
-
                 }
-
             </View>
+
+            <View>
+                <TextInput style={styles.comment}
+                    placeholder="Visited? Leave a comment for your fellow foragers."
+                    onChangeText={(comment) => setComment(comment)}
+                />
+                <View style={styles.buttonContainer}>
+                    <View style={styles.button}>
+                        <Button
+                            title="Submit"
+                            onPress={() => addComment(comment)}
+                            color='#30a46c'
+                        >
+                        </Button>
+                    </View>
+                </View>
+            </View>
+
+            <View style={styles.buttonContainer}>
+                <View style={styles.button}>
+                    <Button
+                        title="View Comments"
+                        onPress={() => { getAllComments(); setModalOpen(true) }}
+                        color='#30a46c'
+                    >
+                    </Button>
+                </View>
+            </View>
+
+            <Modal visible={modalOpen} animationType='slide' >
+                <View style={styles.modalContent}>
+                    <MaterialIcons
+                        name={"close"}
+                        size={30}
+                        onPress={() => setModalOpen(false)}
+                        style={styles.modalToggle}
+                    />
+                    <FlatList
+                        data={comments}
+                        renderItem={renderComment}
+                        contentContainerStyle={styles.commentsContainer}
+                    />
+                </View>
+            </Modal>
         </View >
     )
 }
@@ -259,43 +253,36 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         width: '89%'
     },
-    tags: {
-        flex: 1,
-        flexWrap: 'wrap',
-        position: 'relative',
-    },
-    tag: {
-        backgroundColor: "#00a46c",
-        paddingHorizontal: 10,
-        paddingVertical: 20,
-        borderRadius: 15,
-        width: '25%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: 10,
-    },
-    tag_text: {
-        fontWeight: "bold",
-        fontSize: 14,
-        color: "#FFF",
-        width: '80%',
-    },
-    input: {
+    comment: {
         borderWidth: 1,
         borderColor: '#ddd',
-        padding: 10,
+        padding: 20,
         fontSize: 14,
         borderRadius: 15,
-        margin: 5,
+        margin: 20,
+        color: 'black'
     },
-    buttons: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
+    button: {
+        width: '35%',
     },
     buttonContainer: {
+        marginRight: 20,
+        marginBottom: 10,
+        flexDirection: "row",
+        justifyContent: "flex-end",
+    },
+    modalToggle: {
+        marginTop: 10,
+        borderWidth: 1,
+        borderColor: '#f2f2f2',
+        padding: 10,
+        borderRadius: 200,
+        alignSelf: 'center',
+    },
+    modalContent: {
         flex: 1,
-        marginLeft: 5,
-    }
+    },
+    commentsContainer: {
+        padding: 10,
+    },
 });

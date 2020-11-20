@@ -63,7 +63,7 @@ class Map extends React.Component {
                 flex: 1
             }}>
                 <View style={{
-                    backgroundColor: "#00a46c",
+                    backgroundColor: "#30a46c",
                     height: "11%",
                     borderBottomLeftRadius: 22,
                     borderBottomRightRadius: 22,
@@ -86,7 +86,7 @@ class Map extends React.Component {
                     </View>
                 </View>
                 <MapDisplay locations={locations} initialRegion={initialRegion}></MapDisplay>
-                            
+
             </View>
         )
     }
