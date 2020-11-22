@@ -5,7 +5,7 @@ import { firebase } from '../firebase/config';
 class LoadingScreen extends React.Component {
 
     constructor(props) {
-        super(props)
+        super()
     }
     componentDidMount() {
         const { navigation } = this.props;

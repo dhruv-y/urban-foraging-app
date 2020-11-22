@@ -19,6 +19,7 @@ const MyTheme = {
     },
 };
 
+// creating navigator for app screens
 const HomeNavigator = () => (
     <Navigator headerMode="none">
         <Screen name="LoadingScreen" component={LoadingScreen} />
