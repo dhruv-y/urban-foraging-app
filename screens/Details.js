@@ -7,10 +7,12 @@ import SingleMapMarker from "../components/maps/single-map-marker/SingleMapMarke
 import { AppLoading } from 'expo';
 const API_KEY = 'a9Yagok3eDrzeRbDw-70RUFFZ9HvCzuvM6FsheMRif0'
 const { width, height } = Dimensions.get("window");
-
+let currentUser
 
 export default function Details({ route, navigation, onSubmit }) {
-    const { treeID, details } = route.params;
+    let { treeID, details } = route.params;
+    details.treeID = treeID;
+
     const [isReady, setIsReady] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [comment, setComment] = useState(null);
@@ -24,6 +26,8 @@ export default function Details({ route, navigation, onSubmit }) {
             synonyms: []
         }
     })
+
+
 
     useEffect(() => {
         let mounted = true;
@@ -53,14 +57,9 @@ export default function Details({ route, navigation, onSubmit }) {
                 family_common: data.family_common_name,
                 synonyms: data.synonyms
             }
-        });
-    }
 
-    const handleHealth = (e, val) => {
-        firebase.database().ref(`/trees` + treeID).update({
-            "HEALTH": val
-        })
-        alert("submission recorded!")
+        });
+
     }
 
     const addToFavorites = async (details) => {
@@ -224,7 +223,7 @@ export default function Details({ route, navigation, onSubmit }) {
                                         <View>
                                             <Text style={{ fontSize: 20, color: '#9DA3B4', textAlign: 'center', marginTop: height / 3 }}>
                                                 No comments yet. Be the first to add one!
-                                </Text>
+                                            </Text>
                                             <View style={{
                                                 height: 4,
                                                 backgroundColor: "#b1e5d3",
