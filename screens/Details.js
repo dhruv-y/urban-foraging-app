@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions, TextInput, FlatList, Modal, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions, TextInput, FlatList, Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons"
 import { firebase } from '../firebase/config'
 import axios from 'axios';
@@ -8,13 +8,12 @@ import SingleMapMarker from "../components/maps/single-map-marker/SingleMapMarke
 const API_KEY = 'a9Yagok3eDrzeRbDw-70RUFFZ9HvCzuvM6FsheMRif0'
 const { width, height } = Dimensions.get("window");
 
-export default function Details({ route, navigation }) {
+
+export default function Details({ route, navigation, onSubmit }) {
     const { treeID, details } = route.params;
     const [modalOpen, setModalOpen] = useState(false);
     const [comment, setComment] = useState(null);
     const [comments, setAllComments] = useState([]);
-
-
     const [plantInfo, setPlantInfo] = useState({
         name: "",
         imageURL: "",
@@ -22,10 +21,15 @@ export default function Details({ route, navigation }) {
     })
 
     useEffect(() => {
-        getPlantInfo();
-    }, [])
+        let mounted = true;
+        if (mounted) {
+            getPlantInfo();
+        }
+        return () => mounted = false;
+    }, [plantInfo])
 
     const getPlantInfo = async () => {
+
         const data = await axios
             .get(`https://trefle.io/api/v1/species/search?token=${API_KEY}&q=${details.SPECIES}&limit=1`)
             .then((res) => {
@@ -65,15 +69,23 @@ export default function Details({ route, navigation }) {
     }
 
     const addComment = async (comment) => {
-        // get unique key
-        const databaseRef = await firebase.database().ref
-            ('/trees/' + treeID).child('comments').push()
 
-        // update tree at key
-        databaseRef.set({
-            'comment': comment
-        })
-        alert('Comment added!')
+        if (comment.length) {
+            // get unique key
+            const databaseRef = await firebase.database().ref
+                ('/trees/' + treeID).child('comments').push()
+
+            // update tree at key
+            databaseRef.set({
+                'comment': comment
+            })
+            alert('Comment added!')
+        }
+
+        else {
+            alert('Comment cannot be empty!')
+        }
+
     }
 
     const getAllComments = async () => {
@@ -85,18 +97,26 @@ export default function Details({ route, navigation }) {
                 })
             });
         setAllComments(newData)
-        console.log(comments)
     }
 
     const renderComment = ({ item }) => {
-        console.log(item)
         return (
-            <View>
-                <Text>{item}</Text>
+            <View style={styles.card}>
+                <MaterialIcons
+                    name={"person-outline"}
+                    size={30}
+                />
+                <Text style={{ fontSize: 16, color: 'black', marginTop: 3 }}>{item}</Text>
+                <View style={{
+                    height: 4,
+                    backgroundColor: "#b1e5d3",
+                    width: 50,
+                    marginTop: 2
+                }}>
+                </View>
             </View>
         )
     }
-
 
     return (
         <View style={{ flex: 1, backgroundColor: "#FFF", }}>
@@ -148,9 +168,14 @@ export default function Details({ route, navigation }) {
                 <TextInput style={styles.comment}
                     placeholder="Visited? Leave a comment for your fellow foragers."
                     onChangeText={(comment) => setComment(comment)}
-
+                    value={comment}
                 />
-                <TouchableOpacity onPress={() => addComment(comment)}
+                <TouchableOpacity onPress={() => {
+                    addComment(comment); () => {
+                        onSubmit(comment)
+                        setComment('')
+                    }
+                }}
                     style={styles.commentButton}
                 >
                     <MaterialIcons
@@ -168,11 +193,40 @@ export default function Details({ route, navigation }) {
                         onPress={() => setModalOpen(false)}
                         style={styles.modalToggle}
                     />
-                    <FlatList
-                        data={comments}
-                        renderItem={renderComment}
-                        contentContainerStyle={styles.commentsContainer}
-                    />
+
+                    {
+                        ((comments.length) ?
+                            <View style={{ flex: 1 }}>
+                                <Text style={{ fontSize: 16, color: '#30a46c', marginLeft: 10, marginBottom: 10 }}>Comments [{comments.length}]</Text>
+                                <View style={{ flex: 1 }}>
+                                    <FlatList
+                                        data={comments}
+                                        renderItem={renderComment}
+                                        contentContainerStyle={styles.commentsContainer}
+                                        keyExtractor={(item, index) => index.toString()}
+                                    />
+                                </View>
+                            </View>
+
+                            :
+                            <View>
+                                <Text style={{ fontSize: 20, color: '#30a46c', textAlign: 'center', marginTop: height / 3 }}>
+                                    No comments yet. Be the first to add one!
+                                </Text>
+                                <View style={{
+                                    height: 4,
+                                    backgroundColor: "#b1e5d3",
+                                    width: 120,
+                                    marginTop: 2,
+                                    alignSelf: 'center'
+                                }}>
+                                </View>
+                            </View>
+
+
+                        )
+                    }
+
                 </View>
             </Modal>
 
@@ -359,5 +413,19 @@ const styles = StyleSheet.create({
     },
     commentsContainer: {
         padding: 10,
+    },
+    card: {
+        backgroundColor: 'white',
+        borderRadius: 16,
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        shadowColor: 'black',
+        shadowOffset: {
+            height: 0,
+            width: 0,
+        },
+        elevation: 1,
+        padding: 25,
+        marginVertical: 8,
     },
 });
