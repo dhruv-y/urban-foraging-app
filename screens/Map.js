@@ -130,39 +130,46 @@ class Map extends React.Component {
 
                     {
                         (
-                            filtered ?
-                                <TouchableOpacity style={{
-                                    backgroundColor: "#30a46c",
-                                    paddingVertical: 10,
-                                    borderRadius: 15,
-                                    width: '40%'
-                                }}
-                                    onPress={() => this.getAllLocations()}
-                                >
-                                    <Text style={{
-                                        fontWeight: "bold",
-                                        fontSize: 14,
-                                        color: "#FFF",
-                                        textAlign: 'center'
-                                    }}>Show All</Text>
-                                </TouchableOpacity>
+                            firebase.auth().currentUser ?
+                                (
+                                    filtered ?
+                                        <TouchableOpacity style={{
+                                            backgroundColor: "#30a46c",
+                                            paddingVertical: 10,
+                                            borderRadius: 15,
+                                            width: '40%'
+                                        }}
+                                            onPress={() => this.getAllLocations()}
+                                        >
+                                            <Text style={{
+                                                fontWeight: "bold",
+                                                fontSize: 14,
+                                                color: "#FFF",
+                                                textAlign: 'center'
+                                            }}>Show All</Text>
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity style={{
+                                            backgroundColor: "#00a46c",
+                                            paddingVertical: 10,
+                                            borderRadius: 15,
+                                            width: '40%'
+                                        }}
+                                            onPress={() => this.handleFavorites()}
+                                        >
+                                            <Text style={{
+                                                fontWeight: "bold",
+                                                fontSize: 14,
+                                                color: "#FFF",
+                                                textAlign: 'center'
+                                            }}>Filter Favorites</Text>
+                                        </TouchableOpacity>
+                                )
+
                                 :
-                                <TouchableOpacity style={{
-                                    backgroundColor: "#00a46c",
-                                    paddingVertical: 10,
-                                    borderRadius: 15,
-                                    width: '40%'
-                                }}
-                                    onPress={() => this.handleFavorites()}
-                                >
-                                    <Text style={{
-                                        fontWeight: "bold",
-                                        fontSize: 14,
-                                        color: "#FFF",
-                                        textAlign: 'center'
-                                    }}>Filter Favorites</Text>
-                                </TouchableOpacity>
+                                null
                         )
+
                     }
 
                 </View>
