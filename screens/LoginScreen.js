@@ -32,7 +32,7 @@ export default class Login extends Component {
             firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
                 .then((user) => {
                     alert("Register Success!")
-                    this.props.navigation.immediatelyResetRouteStack("Dashboard")
+                    this.props.navigation.navigate("Dashboard")
                 });
 
         } catch (error) {

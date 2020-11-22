@@ -59,6 +59,13 @@ class Dashboard extends React.Component {
                     <Text h3 gray2 style={{ marginTop: theme.sizes.padding / 2 }}>
                         Welcome, {this.state.email.split("@")[0]}
                     </Text>
+                    <View style={{
+                        height: 4,
+                        backgroundColor: "#b1e5d3",
+                        width: 60,
+                        marginTop: -3
+                    }}>
+                    </View>
                 </Block>
                 <Block center middle>
                     <Image

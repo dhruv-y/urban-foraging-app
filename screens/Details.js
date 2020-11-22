@@ -1,23 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions, TextInput, FlatList, Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions, TextInput, FlatList, Modal, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons"
 import { firebase } from '../firebase/config'
 import axios from 'axios';
 import SingleMapMarker from "../components/maps/single-map-marker/SingleMapMarker"
-
+import { AppLoading } from 'expo';
 const API_KEY = 'a9Yagok3eDrzeRbDw-70RUFFZ9HvCzuvM6FsheMRif0'
 const { width, height } = Dimensions.get("window");
 
 
 export default function Details({ route, navigation, onSubmit }) {
     const { treeID, details } = route.params;
+    const [isReady, setIsReady] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [comment, setComment] = useState(null);
     const [comments, setAllComments] = useState([]);
     const [plantInfo, setPlantInfo] = useState({
         name: "",
         imageURL: "",
-
+        misc: {
+            family: "",
+            family_common: "",
+            synonyms: []
+        }
     })
 
     useEffect(() => {
@@ -26,13 +31,14 @@ export default function Details({ route, navigation, onSubmit }) {
             getPlantInfo();
         }
         return () => mounted = false;
-    }, [plantInfo])
+    }, [plantInfo]);
 
     const getPlantInfo = async () => {
 
         const data = await axios
             .get(`https://trefle.io/api/v1/species/search?token=${API_KEY}&q=${details.SPECIES}&limit=1`)
             .then((res) => {
+                setIsReady(true)
                 return res.data.data[0]
             })
             .catch(function (error) {
@@ -42,6 +48,11 @@ export default function Details({ route, navigation, onSubmit }) {
         setPlantInfo({
             name: data.common_name,
             imageURL: data.image_url,
+            misc: {
+                family: data.family,
+                family_common: data.family_common_name,
+                synonyms: data.synonyms
+            }
         });
     }
 
@@ -107,215 +118,220 @@ export default function Details({ route, navigation, onSubmit }) {
                     size={30}
                 />
                 <Text style={{ fontSize: 16, color: 'black', marginTop: 3 }}>{item}</Text>
-                <View style={{
-                    height: 4,
-                    backgroundColor: "#b1e5d3",
-                    width: 50,
-                    marginTop: 2
-                }}>
+                <View style={styles.underline}>
                 </View>
             </View>
         )
     }
 
+
     return (
         <View style={{ flex: 1, backgroundColor: "#FFF", }}>
-            <ImageBackground
-                source={{
-                    uri: plantInfo.imageURL + ".jpg",
-                }}
-                style={styles.image}
-                imageStyle={{
-                    borderBottomLeftRadius: 30,
-                    borderBottomRightRadius: 30,
-                    opacity: 1
-                }}
-            >
-                <View style={styles.header}>
-                    <Text style={styles.title}>{plantInfo.name}</Text>
-                    <Text style={styles.subtitle}>{details.SPECIES}</Text>
+            {
 
-                </View>
-            </ImageBackground>
+                (!isReady ?
+                    <Text style={{ fontSize: 20, color: '#9DA3B4', textAlign: 'center', marginTop: height / 2 }}>Loading...</Text>
+                    :
+                    <View>
+                        <ImageBackground
+                            source={{
+                                uri: plantInfo.imageURL + ".jpg",
+                            }}
+                            style={styles.image}
+                            imageStyle={{
+                                borderBottomLeftRadius: 30,
+                                borderBottomRightRadius: 30,
+                                opacity: 1
+                            }}
+                        >
+                            <View style={styles.header}>
+                                <Text style={styles.title}>{plantInfo.name}</Text>
+                                <Text style={styles.subtitle}>{details.SPECIES}</Text>
 
-            <View style={styles.body}>
-                <View style={styles.location}>
-                    <Image
-                        style={{ width: 30, height: 30, marginTop: 5 }}
-                        source={require('../assets/images/location_marker_2.png')}
-                    />
-                    <Text style={styles.info}>{details.ADDRESS} {details.STREET}</Text>
-                </View>
+                            </View>
+                        </ImageBackground>
 
-                <View style={styles.tags}>
-                    <Image
-                        style={{ width: 30, height: 30, marginTop: 7 }}
-                        source={require('../assets/images/info_icon.png')}
-                    />
-                    <View style={styles.tag}>
-                        <Text style={styles.tag_text}>Health</Text>
-                    </View>
-                    <View style={styles.tag}>
-                        <Text style={styles.tag_text}>Edibility</Text>
-                    </View>
-                    <View style={styles.tag}>
-                        <Text style={styles.tag_text}>Yield</Text>
-                    </View>
-                </View>
-            </View>
-
-            <View style={styles.commentContainer}>
-                <TextInput style={styles.comment}
-                    placeholder="Visited? Leave a comment for your fellow foragers."
-                    onChangeText={(comment) => setComment(comment)}
-                    value={comment}
-                />
-                <TouchableOpacity onPress={() => {
-                    addComment(comment); () => {
-                        onSubmit(comment)
-                        setComment('')
-                    }
-                }}
-                    style={styles.commentButton}
-                >
-                    <MaterialIcons
-                        name={"add"}
-                        size={30}
-                    />
-                </TouchableOpacity>
-            </View>
-
-            <Modal visible={modalOpen} animationType='slide' >
-                <View style={styles.modalContent}>
-                    <MaterialIcons
-                        name={"close"}
-                        size={30}
-                        onPress={() => setModalOpen(false)}
-                        style={styles.modalToggle}
-                    />
-
-                    {
-                        ((comments.length) ?
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ fontSize: 16, color: '#30a46c', marginLeft: 10, marginBottom: 10 }}>Comments [{comments.length}]</Text>
-                                <View style={{ flex: 1 }}>
-                                    <FlatList
-                                        data={comments}
-                                        renderItem={renderComment}
-                                        contentContainerStyle={styles.commentsContainer}
-                                        keyExtractor={(item, index) => index.toString()}
-                                    />
-                                </View>
+                        <View style={styles.body}>
+                            <View style={styles.location}>
+                                <Image
+                                    style={{ width: 30, height: 30, marginTop: 5 }}
+                                    source={require('../assets/images/location_marker_2.png')}
+                                />
+                                <Text style={styles.info}>{details.ADDRESS} {details.STREET} ({details.SIDE})</Text>
                             </View>
 
-                            :
-                            <View>
-                                <Text style={{ fontSize: 20, color: '#30a46c', textAlign: 'center', marginTop: height / 3 }}>
-                                    No comments yet. Be the first to add one!
+                            <View style={styles.description}>
+                                <Text style={styles.info_sub}>Description</Text>
+                                <View style={styles.underline}>
+                                </View>
+                                <View>
+                                    <Text style={styles.info_para}>Also known as {plantInfo.name}. This plant
+                        is a species of the {plantInfo.misc.family} family
+                        ({plantInfo.misc.family_common}).</Text>
+                                    <Text style={styles.info_sub}>Synonyms</Text>
+                                    <View style={styles.underline}>
+                                    </View>
+                                    <Text style={styles.info_para}>[{plantInfo.misc.synonyms.slice(0, 3).join(", ")}]</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        <View style={styles.commentContainer}>
+                            <TextInput style={styles.comment}
+                                placeholder="Visited? Leave a comment for your fellow foragers."
+                                onChangeText={(comment) => setComment(comment)}
+                                value={comment}
+                            />
+                            <TouchableOpacity onPress={() => {
+                                addComment(comment); () => {
+                                    onSubmit(comment)
+                                    setComment('')
+                                }
+                            }}
+                                style={styles.commentButton}
+                            >
+                                <MaterialIcons
+                                    name={"add"}
+                                    size={30}
+                                />
+                            </TouchableOpacity>
+                        </View>
+
+                        <Modal visible={modalOpen} animationType='slide' >
+                            <View style={styles.modalContent}>
+                                <MaterialIcons
+                                    name={"close"}
+                                    size={30}
+                                    onPress={() => setModalOpen(false)}
+                                    style={styles.modalToggle}
+                                />
+
+                                {
+                                    ((comments.length) ?
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={{ fontSize: 16, color: '#30a46c', marginLeft: 10, marginBottom: 10 }}>Comments [{comments.length}]</Text>
+                                            <View style={{ flex: 1 }}>
+                                                <FlatList
+                                                    data={comments}
+                                                    renderItem={renderComment}
+                                                    contentContainerStyle={styles.commentsContainer}
+                                                    keyExtractor={(item, index) => index.toString()}
+                                                />
+                                            </View>
+                                        </View>
+
+                                        :
+                                        <View>
+                                            <Text style={{ fontSize: 20, color: '#9DA3B4', textAlign: 'center', marginTop: height / 3 }}>
+                                                No comments yet. Be the first to add one!
                                 </Text>
-                                <View style={{
-                                    height: 4,
-                                    backgroundColor: "#b1e5d3",
-                                    width: 120,
-                                    marginTop: 2,
-                                    alignSelf: 'center'
-                                }}>
-                                </View>
+                                            <View style={{
+                                                height: 4,
+                                                backgroundColor: "#b1e5d3",
+                                                width: 120,
+                                                marginTop: 2,
+                                                alignSelf: 'center'
+                                            }}>
+                                            </View>
+                                        </View>
+
+
+                                    )
+                                }
+
                             </View>
+                        </Modal>
 
 
-                        )
-                    }
+                        <View>
+                            {
+                                (firebase.auth().currentUser ?
 
-                </View>
-            </Modal>
+                                    <View style={{
+                                        flexDirection: "row",
+                                        width: "100%",
+                                    }}>
+                                        <TouchableOpacity style={{
+                                            width: "50%",
+                                            backgroundColor: "#00a46c",
+                                            height: 70,
+                                            marginTop: 20,
+                                            borderTopRightRadius: 25,
+                                            alignItems: "center",
+                                            justifyContent: "center"
+                                        }}
+                                            onPress={() => addToFavorites(details)}
+                                        >
+                                            <Text style={{
+                                                color: "#FFF",
+                                                fontSize: 17,
+                                                fontWeight: "bold",
+                                                alignSelf: 'stretch',
+                                                textAlign: 'center',
+                                            }}>Mark Visited</Text>
+                                        </TouchableOpacity>
 
+                                        <TouchableOpacity style={{
+                                            width: "50%",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            marginTop: 20,
+                                        }}
+                                            onPress={() => { getAllComments(); setModalOpen(true) }}
+                                        >
+                                            <Text style={{
+                                                color: "#62636a",
+                                                fontWeight: "bold",
+                                                fontSize: 17,
+                                                alignSelf: 'stretch',
+                                                textAlign: 'center',
+                                            }}>Comments</Text>
+                                        </TouchableOpacity>
+                                    </View>
 
-            <View>
-                {
-                    (firebase.auth().currentUser ?
+                                    :
+                                    <View style={{
+                                        flexDirection: "row",
+                                        width: "100%",
+                                    }}>
+                                        <View style={{
+                                            backgroundColor: "#00a46c",
+                                            height: 70,
+                                            marginTop: 20,
+                                            borderTopRightRadius: 25,
+                                            borderTopLeftRadius: 25,
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            width: "100%",
 
-                        <View style={{
-                            flexDirection: "row",
-                            width: "100%",
-                        }}>
-                            <TouchableOpacity style={{
-                                width: "50%",
-                                backgroundColor: "#00a46c",
-                                height: 70,
-                                marginTop: 20,
-                                borderTopRightRadius: 25,
-                                alignItems: "center",
-                                justifyContent: "center"
-                            }}
-                                onPress={() => addToFavorites(details)}
-                            >
-                                <Text style={{
-                                    color: "#FFF",
-                                    fontSize: 17,
-                                    fontWeight: "bold",
-                                    alignSelf: 'stretch',
-                                    textAlign: 'center',
-                                }}>Mark Visited</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={{
-                                width: "50%",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                marginTop: 20,
-                            }}
-                                onPress={() => { getAllComments(); setModalOpen(true) }}
-                            >
-                                <Text style={{
-                                    color: "#62636a",
-                                    fontWeight: "bold",
-                                    fontSize: 17,
-                                    alignSelf: 'stretch',
-                                    textAlign: 'center',
-                                }}>Comments</Text>
-                            </TouchableOpacity>
+                                        }}>
+                                            <TouchableOpacity style={{
+                                                width: "100%",
+                                                marginTop: 20,
+                                            }}
+                                                onPress={() => { getAllComments(); setModalOpen(true) }}
+                                            >
+                                                <Text style={{
+                                                    color: "white",
+                                                    fontWeight: "bold",
+                                                    fontSize: 17,
+                                                    alignSelf: 'stretch',
+                                                    textAlign: 'center',
+                                                }}>View Comments</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                )
+                            }
                         </View>
 
-                        :
-                        <View style={{
-                            flexDirection: "row",
-                            width: "100%",
-                        }}>
-                            <View style={{
-                                backgroundColor: "#00a46c",
-                                height: 70,
-                                marginTop: 20,
-                                borderTopRightRadius: 25,
-                                borderTopLeftRadius: 25,
-                                alignItems: "center",
-                                justifyContent: "center",
-                                width: "100%",
-
-                            }}>
-                                <TouchableOpacity style={{
-                                    width: "100%",
-                                    marginTop: 20,
-                                }}
-                                    onPress={() => { getAllComments(); setModalOpen(true) }}
-                                >
-                                    <Text style={{
-                                        color: "white",
-                                        fontWeight: "bold",
-                                        fontSize: 17,
-                                        alignSelf: 'stretch',
-                                        textAlign: 'center',
-                                    }}>View Comments</Text>
-                                </TouchableOpacity>
-                            </View>
+                        <View>
+                            <SingleMapMarker latitude={details.LATITUDE} longitude={details.LONGITUDE} />
                         </View>
-                    )
-                }
-            </View>
+                    </View>
 
-            <View>
-                <SingleMapMarker latitude={details.LATITUDE} longitude={details.LONGITUDE} />
-            </View>
+                )
+            }
         </View >
     )
 }
@@ -366,18 +382,29 @@ const styles = StyleSheet.create({
     },
     info: {
         color: 'black',
-        fontSize: 28,
+        fontSize: 26,
         fontWeight: 'bold',
         paddingHorizontal: 10,
         width: '89%',
-
+    },
+    info_sub: {
+        color: 'black',
+        fontSize: 20,
+        fontWeight: 'bold',
+        width: '89%',
+    },
+    info_para: {
+        color: 'black',
+        fontSize: 17,
+        marginVertical: 8,
+        fontStyle: 'italic',
+        color: '#9DA3B4'
     },
     commentContainer: {
         flexDirection: 'row',
-        height: 100,
+        height: 95,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 1 / 12 * height
     },
     comment: {
         borderWidth: 1,
@@ -428,4 +455,13 @@ const styles = StyleSheet.create({
         padding: 25,
         marginVertical: 8,
     },
+    description: {
+        paddingHorizontal: 14,
+    },
+    underline: {
+        height: 4,
+        backgroundColor: "#b1e5d3",
+        width: 50,
+        marginTop: -1
+    }
 });

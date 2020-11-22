@@ -7,7 +7,8 @@ import {
     Modal,
     StyleSheet,
     ScrollView,
-    LayoutAnimation
+    LayoutAnimation,
+    View
 } from "react-native";
 import Block from "../components/Block";
 import Button from "../components/Button";
@@ -24,13 +25,20 @@ class Home extends React.Component {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         return (
             <Block center middle>
-                <Block center middle flex={0.5}>
+                <Block center middle flex={0.7}>
                     <Text h1 center bold primary>
                         Forage.
                     </Text>
                     <Text h3 gray2 style={{ marginTop: theme.sizes.padding / 2 }}>
                         Urban Foraging. Simplified.
                     </Text>
+                    <View style={{
+                        height: 4,
+                        backgroundColor: "#b1e5d3",
+                        width: 60,
+                        marginTop: 4
+                    }}>
+                    </View>
                 </Block>
                 <Block center middle>
                     <Image

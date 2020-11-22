@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
     },
     map: {
         ...StyleSheet.absoluteFillObject,
-        marginTop: 0,
     },
 });
 
