@@ -4,40 +4,47 @@ import {
     StyleSheet,
     Text,
     View,
-    Dimensions
+    Dimensions,
+    TouchableOpacity,
+    Modal
 } from 'react-native';
-import database from '@react-native-firebase/database';
+import { MaterialIcons } from "@expo/vector-icons"
 import { firebase } from '../firebase/config'
 import MapDisplay from '../components/maps/map-display/MapDisplay'
+import Button from "../components/Button";
+import Block from "../components/Block";
+import { theme } from "../constants";
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+const { width, height } = Dimensions.get("window");
 
 class Map extends React.Component {
-    constructor() {
+    _isMounted = false;
+
+    constructor(props) {
         super();
+        // set initial values for lat/long/region
         this.state = {
             loading: false,
             locations: [],
-            initialRegion: null
+            initialRegion: null,
+            filtered: false
         }
     }
-
+    // on mount - retrieve list of tree data from firebase
     componentDidMount() {
+        this._isMounted = true;
         this.setState({ loading: true });
-        firebase.database()
-            .ref('/trees')
-            .once('value')
-            .then((snapshot) => {
-                const location = snapshot.val()
-                this.setState({
-                    locations: location,
-                });
-            });
+        this.getAllLocations();
         this._getLocationAsync();
-
     }
 
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
+    // nned to add code block for location permissions
+    // show user marker on map
     _getLocationAsync = async () => {
         const { status } = await Permissions.askAsync(Permissions.LOCATION);
         if (status !== 'granted') {
@@ -51,12 +58,44 @@ class Map extends React.Component {
             latitudeDelta: 0.009,
             longitudeDelta: 0.009,
         }
-
         this.setState({ initialRegion: region })
     }
 
+    getAllLocations = () => {
+        firebase.database()
+            .ref('/trees')
+            .once('value')
+            .then((snapshot) => {
+                const location = snapshot.val()
+                // setstate to retrieved location
+                if (this._isMounted) {
+                    this.setState({
+                        locations: location,
+                    });
+                }
+            });
+        this.setState({ filtered: false })
+
+    }
+
+    // function to load favorite markers only
+    handleFavorites = async () => {
+        let currentUser = await firebase.auth().currentUser
+        let that = this
+        firebase.database().ref('/users/' + currentUser.uid).child('favorites')
+            .on('value', function (snapshot) {
+                const newData = []
+                snapshot.forEach((item) => {
+                    newData.push(item.val().tree)
+                });
+                that.setState({ locations: newData })
+            })
+        this.setState({ filtered: true })
+
+    }
+
     render() {
-        const { loading, locations, initialRegion } = this.state;
+        const { loading, locations, initialRegion, filtered } = this.state;
         return (
             <View style={{
                 backgroundColor: "#FFF",
@@ -87,7 +126,47 @@ class Map extends React.Component {
                 </View>
                 <MapDisplay locations={locations} initialRegion={initialRegion}></MapDisplay>
 
-            </View>
+                <View style={{ width: '100%', bottom: 0, alignItems: 'center', position: 'absolute', marginBottom: 30 }}>
+
+                    {
+                        (
+                            filtered ?
+                                <TouchableOpacity style={{
+                                    backgroundColor: "#30a46c",
+                                    paddingVertical: 10,
+                                    borderRadius: 15,
+                                    width: '40%'
+                                }}
+                                    onPress={() => this.getAllLocations()}
+                                >
+                                    <Text style={{
+                                        fontWeight: "bold",
+                                        fontSize: 14,
+                                        color: "#FFF",
+                                        textAlign: 'center'
+                                    }}>Show All</Text>
+                                </TouchableOpacity>
+                                :
+                                <TouchableOpacity style={{
+                                    backgroundColor: "#00a46c",
+                                    paddingVertical: 10,
+                                    borderRadius: 15,
+                                    width: '40%'
+                                }}
+                                    onPress={() => this.handleFavorites()}
+                                >
+                                    <Text style={{
+                                        fontWeight: "bold",
+                                        fontSize: 14,
+                                        color: "#FFF",
+                                        textAlign: 'center'
+                                    }}>Filter Favorites</Text>
+                                </TouchableOpacity>
+                        )
+                    }
+
+                </View>
+            </View >
         )
     }
 }
@@ -107,7 +186,19 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 20,
         margin: 15,
-    }
+    },
+    modalToggle: {
+        marginTop: 10,
+        borderWidth: 1,
+        borderColor: '#f2f2f2',
+        padding: 10,
+        borderRadius: 200,
+        alignSelf: 'center',
+    },
+    modalContent: {
+        flex: 1,
+        margin: 0,
+    },
 });
 
 export default Map
