@@ -7,6 +7,9 @@ class LoadingScreen extends React.Component {
     constructor(props) {
         super()
     }
+
+    // loading screen navigator for signed in user
+    // if current user exists - Dashboard else Home
     componentDidMount() {
         const { navigation } = this.props;
         firebase.auth().onAuthStateChanged(user => {

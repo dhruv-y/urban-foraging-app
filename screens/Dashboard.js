@@ -18,11 +18,15 @@ class Dashboard extends React.Component {
         }
     }
 
+    // on mount display the current user email
+    // firebase request for logged in user
     componentDidMount() {
         const { email } = firebase.auth().currentUser;
         this.setState({ email })
     }
 
+    // sign out needs to run firebase auth and clear the current user
+    // on sign out, direct back to the home page
     signOutUser() {
         firebase.auth().signOut().then((user) => {
             console.log('Logged out!')
@@ -90,8 +94,6 @@ class Dashboard extends React.Component {
         )
     }
 }
-
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,

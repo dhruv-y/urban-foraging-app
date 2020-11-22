@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons"
 
+// generating custom callouts for each map marker
+// include -> name, location, and button
 const MarkerCallout = ({ details }) => {
 
     const [info, getInfo] = useState({
@@ -19,6 +21,9 @@ const MarkerCallout = ({ details }) => {
         address: details.ADDRESS,
         street: details.STREET
     });
+
+    //  terrible onpress support for buttons within callout
+    // add onpress to the Callout instead
 
     return (
         <Callout>

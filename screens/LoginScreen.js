@@ -12,6 +12,7 @@ import Text from "../components/Text";
 import Input from "../components/Input";
 import { theme } from "../constants";
 
+// handle email validation
 const __isValidEmail = email => {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
@@ -28,23 +29,31 @@ export default class Login extends Component {
         })
     }
 
+    // on register
+    // set error handling Alerts
+    // on success -> register user in DB, redirect to dashboard
     handleRegister() {
         try {
-            if (!this.state.password && this.state.password.trim() && this.state.password.length > 6) {
+
+            // check password
+            if (!this.state.password || this.state.password.length < 6) {
                 Alert.alert("Register Error ❌", "Please enter at least 6 characters!")
                 return;
             }
 
+            // check email empty
             else if (!this.state.email) {
                 Alert.alert("Register Error ❌", "Email is required!")
                 return;
             }
 
+            // check email format
             else if (!__isValidEmail(this.state.email)) {
                 Alert.alert("Register Error ❌", "Email is poorly formatted!")
                 return;
             }
 
+            // on success create firebase user
             firebase.auth().createUserWithEmailAndPassword(this.state.email.trim(), this.state.password)
                 .then((user) => {
                     Alert.alert("Register Success ✅", 'Your Forage account was successfully created')
@@ -58,11 +67,18 @@ export default class Login extends Component {
 
     handleLogin() {
         try {
-            if (this.state.password.length < 6) {
-                alert("Please enter at least 6 characters!")
+            if (!this.state.password || this.state.password.length < 6) {
+                Alert.alert("Login Error ❌", "Please enter at least 6 characters!")
                 return;
             }
 
+            // check email format
+            else if (!__isValidEmail(this.state.email) || !this.state.email) {
+                Alert.alert("Login Error ❌", "Email is poorly formatted!")
+                return;
+            }
+
+            // on success, allow user to sign in and redirect to Dashboard
             firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
                 .then((user) => {
                     this.props.navigation.navigate("Dashboard")

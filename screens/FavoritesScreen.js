@@ -25,6 +25,7 @@ class Favorites extends React.Component {
         this._isMounted = false;
     }
 
+    // function to get current users favorites from firebase
     getFavorites = async () => {
         let currentUser = await firebase.auth().currentUser
         let that = this
@@ -34,10 +35,9 @@ class Favorites extends React.Component {
                 snapshot.forEach((item) => {
                     newData.push(item.val().tree)
                 });
-
+                // udpdate state with returned user data
                 if (that._isMounted) {
                     that.setState({ listViewData: newData })
-
                 }
             })
     }
@@ -78,7 +78,6 @@ class Favorites extends React.Component {
             </View >
         )
     }
-
 
     render() {
         const { navigation } = this.props;
@@ -140,7 +139,6 @@ class Favorites extends React.Component {
         )
     }
 }
-
 
 const styles = StyleSheet.create({
     container: {

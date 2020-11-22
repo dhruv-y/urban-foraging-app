@@ -16,9 +16,11 @@ const MapDisplay = ({ locations, initialRegion }) => {
     const navigation = useNavigation();
     const [region, setRegion] = useState(initialRegion);
 
+    // render out map for array of objects
+    // reference LAT and LONG values for each object
+    // for each LAT/LONG -> location marker
     return (
         <View style={styles.container}>
-
             <MapView
                 provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                 style={styles.map}
@@ -43,8 +45,6 @@ const MapDisplay = ({ locations, initialRegion }) => {
                     <MarkerCallout details={marker} />
                 </Marker >)}
             </MapView>
-
-
         </View >
     );
 }

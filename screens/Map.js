@@ -51,23 +51,29 @@ class Map extends React.Component {
             alert('Permission Not Granted!');
         }
 
+        // on location enabled
         const location = await Location.getCurrentPositionAsync({ enabledHighAccuracy: true });
+
+        // region set to the current user location
         let region = {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
             latitudeDelta: 0.009,
             longitudeDelta: 0.009,
         }
+        // update state
         this.setState({ initialRegion: region })
     }
 
+    // function to recieve snapshot of all tree data
+    // update state to array of Tree objects
     getAllLocations = () => {
         firebase.database()
             .ref('/trees')
             .once('value')
             .then((snapshot) => {
                 const location = snapshot.val()
-                // setstate to retrieved location
+                // setstate to retrieved locations
                 if (this._isMounted) {
                     this.setState({
                         locations: location,
@@ -79,9 +85,12 @@ class Map extends React.Component {
     }
 
     // function to load favorite markers only
+    // user needs to be signed in for this
+    // don't call if no current user
     handleFavorites = async () => {
         let currentUser = await firebase.auth().currentUser
         let that = this
+        // DB call to get all user favorites
         firebase.database().ref('/users/' + currentUser.uid).child('favorites')
             .on('value', function (snapshot) {
                 const newData = []

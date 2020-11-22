@@ -76,18 +76,17 @@ export default function Details({ route, navigation, onSubmit }) {
         Alert.alert("Success ✅", 'The plant was added to your favorites!')
     }
 
+    // invoke function on button press
+    // adds comment to the tree entry in firebase
     const addComment = async (comment) => {
-
         if (comment.length) {
             // get unique key
             const databaseRef = await firebase.database().ref
                 ('/trees/' + treeID).child('comments').push()
-
             // update tree at key
             databaseRef.set({
                 'comment': comment
             })
-
             Alert.alert("Success ✅", 'Your comment was successfully submitted!')
         }
         else {
@@ -96,6 +95,8 @@ export default function Details({ route, navigation, onSubmit }) {
 
     }
 
+    // invoke function to load all tree comments
+    // send data to modal
     const getAllComments = async () => {
         const newData = []
         await firebase.database().ref('/trees/' + treeID).child('comments')
@@ -107,6 +108,7 @@ export default function Details({ route, navigation, onSubmit }) {
         setAllComments(newData)
     }
 
+    // render comment function
     const renderComment = ({ item }) => {
         return (
             <View style={styles.card}>
@@ -120,7 +122,6 @@ export default function Details({ route, navigation, onSubmit }) {
             </View>
         )
     }
-
 
     return (
         <View style={{ flex: 1, backgroundColor: "#FFF", }}>
@@ -239,7 +240,6 @@ export default function Details({ route, navigation, onSubmit }) {
                             </View>
                         </Modal>
 
-
                         <View>
                             {
                                 (firebase.auth().currentUser ?
@@ -265,7 +265,7 @@ export default function Details({ route, navigation, onSubmit }) {
                                                 fontWeight: "bold",
                                                 alignSelf: 'stretch',
                                                 textAlign: 'center',
-                                            }}>Mark Visited</Text>
+                                            }}>Mark Favorite</Text>
                                         </TouchableOpacity>
 
                                         <TouchableOpacity style={{
@@ -326,7 +326,6 @@ export default function Details({ route, navigation, onSubmit }) {
                             <SingleMapMarker latitude={details.LATITUDE} longitude={details.LONGITUDE} />
                         </View>
                     </View>
-
                 )
             }
         </View >

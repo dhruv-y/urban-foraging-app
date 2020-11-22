@@ -8,6 +8,9 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'; // remove 
 import MarkerCallout from '../marker-callout/MarkerCallout'
 const { width, height } = Dimensions.get("window");
 
+// need to load single map markers for different screens
+// take in LAT/LONG and render out map view
+
 const SingleMapMarker = ({ latitude, longitude }) => (
     <View style={styles.container}>
         <MapView
