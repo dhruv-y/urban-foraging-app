@@ -1,5 +1,9 @@
 # Forage - An Urban Foraging App
 
+Home            |  Maps            |  Details
+:-------------------------:|:-------------------------:|:-------------------------:
+![](./assets/sc_1.jpg)  |  ![](./assets/sc_3.jpg)  |  ![](./assets/sc_2.jpg)
+
 ## Description
 
 Forage was developed as part of I527 - Mobile and Pervasive Design, taught by Dr. Patrick Shih at Indiana University, along with Dr. Dana Habeeb (Environmental Planning and Urban Climatology) who was our mentor and provided us with real-world urban foraging data in Bloomington. The final deliverable was a result of an elaborate design process which included various phases for concept development, requirement gathering, user surveys/interviews, needs assessment, iterative design and prototype implementation.
