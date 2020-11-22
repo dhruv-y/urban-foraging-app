@@ -22,33 +22,36 @@ export default class Login extends Component {
         })
     }
 
-    handleRegister = (email, password) => {
+    handleRegister() {
         try {
             if (this.state.password.length < 6) {
                 alert("Please enter at least 6 characters!")
                 return;
             }
 
-            firebase.auth().createUserWithEmailAndPassword(email, password);
-            //navigation.navigate("LoadingScreen")
-            alert("Register Success!")
+            firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+                .then((user) => {
+                    alert("Register Success!")
+                    this.props.navigation.immediatelyResetRouteStack("Dashboard")
+                });
+
         } catch (error) {
             console.log(error.toString())
         }
     }
 
-    handleLogin = (email, password) => {
+    handleLogin() {
         try {
             if (this.state.password.length < 6) {
                 alert("Please enter at least 6 characters!")
                 return;
             }
 
-            firebase.auth().signInWithEmailAndPassword(email, password)
+            firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
                 .then((user) => {
                     alert("Login Success!")
-                    //navigation.navigate("Dashboard")
-                })
+                    this.props.navigation.navigate("Dashboard")
+                });
 
         } catch (error) {
             console.log(error.toString())
@@ -85,14 +88,12 @@ export default class Login extends Component {
                     />
 
                     <View style={{ alignItems: 'center' }}>
-                        <Button gradient onPress={() => this.handleLogin(this.state.email,
-                            this.state.password)}>
+                        <Button gradient onPress={() => this.handleLogin()}>
                             <Text bold white center>
                                 Login
                         </Text>
                         </Button>
-                        <Button gradient onPress={() => this.handleRegister(this.state.email,
-                            this.state.password)}>
+                        <Button gradient onPress={() => this.handleRegister()}>
                             <Text bold white center>
                                 Register
                         </Text>

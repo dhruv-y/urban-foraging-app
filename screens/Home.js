@@ -6,7 +6,8 @@ import {
     FlatList,
     Modal,
     StyleSheet,
-    ScrollView
+    ScrollView,
+    LayoutAnimation
 } from "react-native";
 import Block from "../components/Block";
 import Button from "../components/Button";
@@ -17,9 +18,10 @@ const { width, height } = Dimensions.get("window");
 
 class Home extends React.Component {
 
+
     render() {
         const { navigation } = this.props;
-
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         return (
             <Block center middle>
                 <Block center middle flex={0.5}>
