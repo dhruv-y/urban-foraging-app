@@ -24,7 +24,6 @@ class Dashboard extends React.Component {
     }
 
     signOutUser() {
-        alert('here')
         firebase.auth().signOut().then((user) => {
             console.log('Logged out!')
             this.props.navigation.navigate("Home")
@@ -63,7 +62,7 @@ class Dashboard extends React.Component {
                         height: 4,
                         backgroundColor: "#b1e5d3",
                         width: 60,
-                        marginTop: -3
+                        marginTop: -1
                     }}>
                     </View>
                 </Block>

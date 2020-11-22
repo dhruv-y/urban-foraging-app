@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import {
     StyleSheet,
     View,
-    Image
+    Image,
+    Alert
 } from "react-native";
 import { firebase } from '../firebase/config'
 import Block from "../components/Block";
@@ -11,10 +12,15 @@ import Text from "../components/Text";
 import Input from "../components/Input";
 import { theme } from "../constants";
 
+const __isValidEmail = email => {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+};
+
 export default class Login extends Component {
 
     constructor(props) {
-        super(props)
+        super()
 
         this.state = ({
             email: "",
@@ -24,19 +30,29 @@ export default class Login extends Component {
 
     handleRegister() {
         try {
-            if (this.state.password.length < 6) {
-                alert("Please enter at least 6 characters!")
+            if (!this.state.password && this.state.password.trim() && this.state.password.length > 6) {
+                Alert.alert("Register Error ❌", "Please enter at least 6 characters!")
                 return;
             }
 
-            firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+            else if (!this.state.email) {
+                Alert.alert("Register Error ❌", "Email is required!")
+                return;
+            }
+
+            else if (!__isValidEmail(this.state.email)) {
+                Alert.alert("Register Error ❌", "Email is poorly formatted!")
+                return;
+            }
+
+            firebase.auth().createUserWithEmailAndPassword(this.state.email.trim(), this.state.password)
                 .then((user) => {
-                    alert("Register Success!")
+                    Alert.alert("Register Success ✅", 'Your Forage account was successfully created')
                     this.props.navigation.navigate("Dashboard")
                 });
 
         } catch (error) {
-            console.log(error.toString())
+            console.log(error.message)
         }
     }
 
@@ -49,12 +65,11 @@ export default class Login extends Component {
 
             firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
                 .then((user) => {
-                    alert("Login Success!")
                     this.props.navigation.navigate("Dashboard")
                 });
 
         } catch (error) {
-            console.log(error.toString())
+            console.log(error.message)
         }
     }
 

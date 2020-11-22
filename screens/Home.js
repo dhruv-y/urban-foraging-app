@@ -4,7 +4,6 @@ import {
     Dimensions,
     Image,
     FlatList,
-    Modal,
     StyleSheet,
     ScrollView,
     LayoutAnimation,
@@ -18,7 +17,6 @@ import { firebase } from '../firebase/config'
 const { width, height } = Dimensions.get("window");
 
 class Home extends React.Component {
-
 
     render() {
         const { navigation } = this.props;

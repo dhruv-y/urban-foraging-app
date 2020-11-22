@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions, TextInput, FlatList, Modal, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, ImageBackground, Dimensions, TextInput, FlatList, Modal, TouchableOpacity, Alert } from 'react-native';
 import { MaterialIcons } from "@expo/vector-icons"
 import { firebase } from '../firebase/config'
 import axios from 'axios';
@@ -26,8 +26,6 @@ export default function Details({ route, navigation, onSubmit }) {
             synonyms: []
         }
     })
-
-
 
     useEffect(() => {
         let mounted = true;
@@ -75,7 +73,7 @@ export default function Details({ route, navigation, onSubmit }) {
             'tree': details
         })
 
-        alert('Added to favorites!')
+        Alert.alert("Success ✅", 'The plant was added to your favorites!')
     }
 
     const addComment = async (comment) => {
@@ -89,9 +87,9 @@ export default function Details({ route, navigation, onSubmit }) {
             databaseRef.set({
                 'comment': comment
             })
-            alert('Comment added!')
-        }
 
+            Alert.alert("Success ✅", 'Your comment was successfully submitted!')
+        }
         else {
             alert('Comment cannot be empty!')
         }

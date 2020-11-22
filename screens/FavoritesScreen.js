@@ -6,8 +6,10 @@ import SingleMapMarker from '../components/maps/single-map-marker/SingleMapMarke
 const { width, height } = Dimensions.get("window");
 
 class Favorites extends React.Component {
+    _isMounted = false;
+
     constructor(props) {
-        super(props)
+        super()
 
         this.state = {
             listViewData: []
@@ -15,7 +17,12 @@ class Favorites extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         this.getFavorites();
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     getFavorites = async () => {
@@ -27,7 +34,11 @@ class Favorites extends React.Component {
                 snapshot.forEach((item) => {
                     newData.push(item.val().tree)
                 });
-                that.setState({ listViewData: newData })
+
+                if (that._isMounted) {
+                    that.setState({ listViewData: newData })
+
+                }
             })
     }
 
@@ -35,24 +46,29 @@ class Favorites extends React.Component {
         return (
             <View style={styles.card}>
                 <View style={styles.card_header}>
-                    <Text style={{ fontSize: 18, color: 'black', width: '90%', marginBottom: 5 }}>You discovered {item.SPECIES} on {item.STREET}</Text>
-                    <TouchableOpacity onPress={() => {
-                        this.props.navigation.navigate('Details',
-                            {
-                                treeID: item.treeID,
-                                details: item
-                            }
-                        )
-                    }}>
-                        <Text style={{
-                            fontSize: 16, color: '#9DA3B4', fontStyle: 'italic'
-                        }}>Visit</Text>
-                        <View style={{
-                            height: 4,
-                            backgroundColor: "#b1e5d3",
-                            width: 35,
-                            marginTop: -3,
+                    <Text style={{ fontSize: 18, color: 'black', width: '70%', marginBottom: 5 }}>You discovered <Text style={{ color: '#30a46c' }}>{item.SPECIES}</Text> on {item.STREET}</Text>
+                    <TouchableOpacity
+                        style={{ width: "20%" }}
+                        onPress={() => {
+                            this.props.navigation.navigate('Details',
+                                {
+                                    treeID: item.treeID,
+                                    details: item
+                                }
+                            )
                         }}>
+                        <View style={{
+                            backgroundColor: "#00a46c",
+                            paddingHorizontal: 10,
+                            paddingVertical: 7,
+                            borderRadius: 15
+                        }}>
+                            <Text style={{
+                                fontWeight: "bold",
+                                fontSize: 13,
+                                color: "#FFF",
+                                textAlign: 'center'
+                            }}>More</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -158,6 +174,7 @@ const styles = StyleSheet.create({
     card_header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        paddingHorizontal: 2
     }
 });
 
